@@ -30,7 +30,7 @@ public class CheatCode
                 cheat();
                 continue;
             }
-                tries[i] = tries[i++][1..];          
+            tries[i] = tries[i++][1..];
 
         }
         if (c == cheatCode[0])
@@ -39,7 +39,7 @@ public class CheatCode
         }
     }
 
-    public  static void Update(List<CheatCode> cheats)
+    public static void Update(List<CheatCode> cheats)
     {
         if (Input.anyKeyDown)
         {
@@ -51,6 +51,22 @@ public class CheatCode
                     {
                         item.Check(char.ToLower(kcode.ToString()[0]));
                     }
+                    return;
+                }
+            }
+            return;
+
+        }
+    }
+    public static void Update(CheatCode cheat)
+    {
+        if (Input.anyKeyDown)
+        {
+            foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(kcode))
+                {
+                    cheat.Check(char.ToLower(kcode.ToString()[0]));
                     return;
                 }
             }
