@@ -54,9 +54,25 @@ public class CheatCode
                     return;
                 }
             }
-            return;
+
 
         }
+    }
+    public static void UpdateVr(List<CheatCode> cheats)
+    {
+        foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
+        {
+            if (OVRInput.GetDown(kcode))
+            {
+                Debug.LogError(kcode);
+                foreach (var item in cheats)
+                {
+                    item.Check(char.ToLower(kcode.ToString()[0]));
+                }
+                return;
+            }
+        }
+
     }
     public static void Update(CheatCode cheat)
     {
@@ -72,6 +88,17 @@ public class CheatCode
             }
             return;
 
+        }
+    }
+    public static void UpdateVr(CheatCode cheat)
+    {
+        foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
+        {
+            if (OVRInput.GetDown(kcode))
+            {
+                cheat.Check(char.ToLower(kcode.ToString()[0]));
+                return;
+            }
         }
     }
 }
