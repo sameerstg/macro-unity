@@ -64,7 +64,7 @@ public class CheatCode
         {
             if (OVRInput.GetDown(kcode))
             {
-                Debug.LogError(kcode);
+                //Debug.LogError(kcode);
                 foreach (var item in cheats)
                 {
                     item.Check(char.ToLower(kcode.ToString()[0]));
