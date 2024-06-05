@@ -1,0 +1,15 @@
+{
+	"name":"com.sameerstg.macro-unity",
+	"version":"1.0.0",
+	"displayName":"Macro",
+	"description":"Package to which helps you to implement macro in unity",
+	"unity":"2018.1",
+	"author":{
+		"name":"Sameer Ahmed",
+		"email":"sameerstg@outlook.com",
+		"url":"www.sameerstg.com"
+
+
+	}
+
+}
