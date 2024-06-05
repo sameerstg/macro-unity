@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [Serializable]
-public class CheatCode
+public class Macro
 {
-    public string cheatCode;
-    public Action cheat;
-    public List<string> tries = new();
-    public CheatCode(string cheatCode, Action cheat)
+    public string macroCode;
+    public UnityEvent Callback;
+    internal List<string> tries = new();
+    public Macro(string macroCode, Action macroAction)
     {
-        this.cheatCode = cheatCode;
-        this.cheat = cheat;
+        this.macroCode = macroCode;
+        AddAction(macroAction);
+        tries = new();
+    }
+    public void AddAction(Action action)
+    {
+        Callback.AddListener(() => action?.Invoke());
     }
     public void Check(char c)
     {
@@ -27,19 +33,19 @@ public class CheatCode
             if (tries[i].Length == 1)
             {
                 tries.RemoveAt(i);
-                cheat();
+                Callback?.Invoke();
                 continue;
             }
             tries[i] = tries[i++][1..];
 
         }
-        if (c == cheatCode[0])
+        if (c == macroCode[0])
         {
-            tries.Add(cheatCode[1..]);
+            tries.Add(macroCode[1..]);
         }
     }
 
-    public static void Update(List<CheatCode> cheats)
+    public static void Update(List<Macro> cheats)
     {
         if (Input.anyKeyDown)
         {
@@ -49,6 +55,7 @@ public class CheatCode
                 {
                     foreach (var item in cheats)
                     {
+                        if (string.IsNullOrEmpty(item.macroCode)) continue;
                         item.Check(char.ToLower(kcode.ToString()[0]));
                     }
                     return;
@@ -58,15 +65,15 @@ public class CheatCode
 
         }
     }
-    public static void UpdateVr(List<CheatCode> cheats)
+    public static void UpdateVr(List<Macro> cheats)
     {
         foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
         {
             if (OVRInput.GetDown(kcode))
             {
-                //Debug.LogError(kcode);
                 foreach (var item in cheats)
                 {
+                    if (string.IsNullOrEmpty(item.macroCode)) continue;
                     item.Check(char.ToLower(kcode.ToString()[0]));
                 }
                 return;
@@ -74,15 +81,16 @@ public class CheatCode
         }
 
     }
-    public static void Update(CheatCode cheat)
+    public static void Update(Macro macro)
     {
+        if (string.IsNullOrEmpty(macro.macroCode)) return;
         if (Input.anyKeyDown)
         {
             foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
             {
                 if (Input.GetKeyDown(kcode))
                 {
-                    cheat.Check(char.ToLower(kcode.ToString()[0]));
+                    macro.Check(char.ToLower(kcode.ToString()[0]));
                     return;
                 }
             }
@@ -90,13 +98,14 @@ public class CheatCode
 
         }
     }
-    public static void UpdateVr(CheatCode cheat)
+    public static void UpdateVr(Macro macro)
     {
+        if (string.IsNullOrEmpty(macro.macroCode)) return;
         foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
         {
             if (OVRInput.GetDown(kcode))
             {
-                cheat.Check(char.ToLower(kcode.ToString()[0]));
+                macro.Check(char.ToLower(kcode.ToString()[0]));
                 return;
             }
         }
