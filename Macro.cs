@@ -2,111 +2,85 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
-[Serializable]
-public class Macro
+namespace Stg.MacroTools
 {
-    public string macroCode;
-    public UnityEvent Callback;
-    internal List<string> tries = new();
-    public Macro(string macroCode, Action macroAction)
+    [Serializable]
+    public class Macro
     {
-        this.macroCode = macroCode;
-        AddAction(macroAction);
-        tries = new();
-    }
-    public void AddAction(Action action)
-    {
-        Callback.AddListener(() => action?.Invoke());
-    }
-    public void Check(char c)
-    {
-        for (int i = 0; i < tries.Count;)
+        public string macroCode;
+        public UnityEvent Callback;
+        internal List<string> tries = new();
+        public Macro(string macroCode, Action macroAction)
         {
-
-            if (tries[i][0] != c)
-            {
-                tries.RemoveAt(i);
-                continue;
-            }
-
-            if (tries[i].Length == 1)
-            {
-                tries.RemoveAt(i);
-                Callback?.Invoke();
-                continue;
-            }
-            tries[i] = tries[i++][1..];
-
+            this.macroCode = macroCode;
+            AddAction(macroAction);
+            tries = new();
         }
-        if (c == macroCode[0])
+        public void AddAction(Action action)
         {
-            tries.Add(macroCode[1..]);
+            Callback.AddListener(() => action?.Invoke());
         }
-    }
-
-    public static void Update(List<Macro> cheats)
-    {
-        if (Input.anyKeyDown)
+        public void Check(char c)
         {
-            foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
+            for (int i = 0; i < tries.Count;)
             {
-                if (Input.GetKeyDown(kcode))
+
+                if (tries[i][0] != c)
                 {
-                    foreach (var item in cheats)
+                    tries.RemoveAt(i);
+                    continue;
+                }
+
+                if (tries[i].Length == 1)
+                {
+                    tries.RemoveAt(i);
+                    Callback?.Invoke();
+                    continue;
+                }
+                tries[i] = tries[i++][1..];
+
+            }
+            if (c == macroCode[0])
+            {
+                tries.Add(macroCode[1..]);
+            }
+        }
+
+        public static void Update(List<Macro> cheats)
+        {
+            if (Input.anyKeyDown)
+            {
+                foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
+                {
+                    if (Input.GetKeyDown(kcode))
                     {
-                        if (string.IsNullOrEmpty(item.macroCode)) continue;
-                        item.Check(char.ToLower(kcode.ToString()[0]));
+                        foreach (var item in cheats)
+                        {
+                            if (string.IsNullOrEmpty(item.macroCode)) continue;
+                            item.Check(char.ToLower(kcode.ToString()[0]));
+                        }
+                        return;
                     }
-                    return;
                 }
+
+
             }
-
-
         }
-    }
-    public static void UpdateVr(List<Macro> cheats)
-    {
-        foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
+        public static void Update(Macro macro)
         {
-            if (OVRInput.GetDown(kcode))
+            if (string.IsNullOrEmpty(macro.macroCode)) return;
+            if (Input.anyKeyDown)
             {
-                foreach (var item in cheats)
+                foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
                 {
-                    if (string.IsNullOrEmpty(item.macroCode)) continue;
-                    item.Check(char.ToLower(kcode.ToString()[0]));
+                    if (Input.GetKeyDown(kcode))
+                    {
+                        macro.Check(char.ToLower(kcode.ToString()[0]));
+                        return;
+                    }
                 }
                 return;
-            }
-        }
 
-    }
-    public static void Update(Macro macro)
-    {
-        if (string.IsNullOrEmpty(macro.macroCode)) return;
-        if (Input.anyKeyDown)
-        {
-            foreach (KeyCode kcode in Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(kcode))
-                {
-                    macro.Check(char.ToLower(kcode.ToString()[0]));
-                    return;
-                }
-            }
-            return;
-
-        }
-    }
-    public static void UpdateVr(Macro macro)
-    {
-        if (string.IsNullOrEmpty(macro.macroCode)) return;
-        foreach (OVRInput.RawButton kcode in Enum.GetValues(typeof(OVRInput.RawButton)))
-        {
-            if (OVRInput.GetDown(kcode))
-            {
-                macro.Check(char.ToLower(kcode.ToString()[0]));
-                return;
             }
         }
     }

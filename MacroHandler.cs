@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-public class MacroHandler : MonoBehaviour
+namespace Stg.MacroTools
 {
-    public List<Macro> macros;
-    private void Start()
+    public class MacroHandler : MonoBehaviour
     {
-        foreach (var item in macros)
+        public List<Macro> macros;
+        private void Start()
         {
-            item.tries = new();
+            foreach (var item in macros)
+            {
+                item.tries = new();
+            }
+        }
+        private void Update()
+        {
+            Macro.Update(macros);
         }
     }
-    private void Update()
-    {
-        Macro.Update(macros);
-    }
 }
+
