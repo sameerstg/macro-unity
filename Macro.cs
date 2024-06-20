@@ -57,7 +57,7 @@ namespace Stg.MacroTools
                         foreach (var item in cheats)
                         {
                             if (string.IsNullOrEmpty(item.macroCode)) continue;
-                            item.Check(char.ToLower(kcode.ToString()[0]));
+                            item.Check(char.ToLower(Normalize(kcode.ToString())[0]));
                         }
                         return;
                     }
@@ -75,13 +75,29 @@ namespace Stg.MacroTools
                 {
                     if (Input.GetKeyDown(kcode))
                     {
-                        macro.Check(char.ToLower(kcode.ToString()[0]));
+                        macro.Check(char.ToLower(Normalize(kcode.ToString())[0]));
                         return;
                     }
                 }
                 return;
 
             }
+        }
+        public static string Normalize(string keycode)
+        {
+            string toRemove = "Alpha";
+            int index = keycode.IndexOf(toRemove);
+            if (index >= 0)
+            {
+                return keycode.Remove(index, toRemove.Length);
+            }
+            toRemove = "Keypad";
+            index = keycode.IndexOf(toRemove);
+            if (index >= 0)
+            {
+                return keycode.Remove(index, toRemove.Length);
+            }
+            return keycode;
         }
     }
 }
